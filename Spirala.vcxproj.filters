@@ -13,10 +13,48 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Pliki nagłówkowe\Config">
+      <UniqueIdentifier>{5cad19d1-e8ed-48fe-9c2d-4016667a4a0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\Tasks">
+      <UniqueIdentifier>{bfa89d3e-c36a-4698-bcdf-1b9606bd57c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\Scenes">
+      <UniqueIdentifier>{a7960248-fc2b-4f3b-94f1-493d162bc774}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="hello.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameContext.h">
+      <Filter>Pliki nagłówkowe\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="IEvent.h">
+      <Filter>Pliki nagłówkowe\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Static.h">
+      <Filter>Pliki nagłówkowe\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskManager.h">
+      <Filter>Pliki nagłówkowe\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="ITask.h">
+      <Filter>Pliki nagłówkowe\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="IScene.h">
+      <Filter>Pliki nagłówkowe\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundScene.h">
+      <Filter>Pliki nagłówkowe\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="LogoScene.h">
+      <Filter>Pliki nagłówkowe\Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
