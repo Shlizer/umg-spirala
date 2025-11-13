@@ -22,4 +22,11 @@ public:
                 ++it;
         }
     }
+
+    void Render() {
+        for (auto it = tasks.begin(); it != tasks.end();) {
+            (*it)->Render();
+            ++it;
+        }
+    }
 };

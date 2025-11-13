@@ -57,11 +57,13 @@ namespace CONFIG {
 	/*****************************************
 	 *  A N I M A T I O N   S T A T E S
 	 */
-	//								alpha	scale						x	y
-	AnimState LOGO_INIT = {			0,		FONT_SCALE_LOGO_INIT,		0,	300 };
-	AnimState LOGO_MENU_UP = {		255,	FONT_SCALE_LOGO_MENU_UP,	0,	100 };
-	AnimState LOGO_MENU_DOWN = {	155,	FONT_SCALE_LOGO_MENU_DOWN,	0,	150 };
-	AnimState LOGO_GAMEPLAY = {		155,	FONT_SCALE_LOGO_GAMEPLAY,	0,	20 };
+	//									alpha	scale						x	y
+	AnimState ANIM_LOGO_INIT = {		0,		FONT_SCALE_LOGO_INIT,		0,	300 };
+	AnimState ANIM_LOGO_MENU_UP = {		255,	FONT_SCALE_LOGO_MENU_UP,	0,	100 };
+	AnimState ANIM_LOGO_MENU_DOWN = {	155,	FONT_SCALE_LOGO_MENU_DOWN,	0,	150 };
+	AnimState ANIM_LOGO_GAMEPLAY = {	155,	FONT_SCALE_LOGO_GAMEPLAY,	0,	20 };
+	AnimState ANIM_COUNTDOWN_START = {	220,	0.8,						0,	-100 };
+	AnimState ANIM_COUNTDOWN_END = {	0,		4.0,						0,	0 };
 
 	/*****************************************
 	 *  T I M E

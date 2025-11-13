@@ -52,6 +52,7 @@ private:
             }
         }
 
+        this->Context->taskManager->Render();
         SDL_RenderPresent(this->Context->renderer);
     }
 

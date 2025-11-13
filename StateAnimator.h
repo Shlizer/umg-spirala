@@ -86,6 +86,10 @@ public:
         return this->current;
     }
 
+    bool IsAnimating() {
+        return this->mode != AnimMode::None;
+    }
+
     void Stop() {
         this->mode = AnimMode::None;
     }

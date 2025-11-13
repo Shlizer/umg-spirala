@@ -21,15 +21,15 @@ public:
         this->textTexture = SDL_CreateTextureFromSurface(this->Context->renderer, textSurface);
 
         this->animator.setSmooth(true);
-        this->animator.SetState(CONFIG::LOGO_INIT);
-        this->animator.BlendTo(CONFIG::LOGO_MENU_UP, CONFIG::TIME_LOGO_SHOW, [this]() { this->MenuYoyo(); });
+        this->animator.SetState(CONFIG::ANIM_LOGO_INIT);
+        this->animator.BlendTo(CONFIG::ANIM_LOGO_MENU_UP, CONFIG::TIME_LOGO_SHOW, [this]() { this->MenuYoyo(); });
 
         this->Context->OnSceneShow.AddListener([this](string sceneName) {
             if (sceneName == MenuScene::Name) {
-                this->animator.BlendTo(CONFIG::LOGO_MENU_UP, CONFIG::TIME_LOGO_SWITCH_MENU, [this]() { this->MenuYoyo(); });
+                this->animator.BlendTo(CONFIG::ANIM_LOGO_MENU_UP, CONFIG::TIME_LOGO_SWITCH_MENU, [this]() { this->MenuYoyo(); });
             }
             else if (sceneName == GameplayScene::Name) {
-                this->animator.BlendTo(CONFIG::LOGO_GAMEPLAY, CONFIG::TIME_LOGO_SWITCH_GAMEPLAY);
+                this->animator.BlendTo(CONFIG::ANIM_LOGO_GAMEPLAY, CONFIG::TIME_LOGO_SWITCH_GAMEPLAY);
             }
         });
     }
@@ -42,7 +42,7 @@ public:
 
     void MenuYoyo() {
         this->Context->OnSceneShow.Invoke(MenuScene::Name);
-        this->animator.YoyoBetween(CONFIG::LOGO_MENU_UP, CONFIG::LOGO_MENU_DOWN, CONFIG::TIME_LOGO_MENU_YOYO);
+        this->animator.YoyoBetween(CONFIG::ANIM_LOGO_MENU_UP, CONFIG::ANIM_LOGO_MENU_DOWN, CONFIG::TIME_LOGO_MENU_YOYO);
     }
 
     void Update(float deltaTime) override {
