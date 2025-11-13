@@ -8,8 +8,7 @@ class BackgroundScene : public IScene {
 
 public:
 	static const string Name;
-
-	string GetName() override { return this->Name; }
+    string GetName() override { return Name; }
 
 	BackgroundScene(GameContext* ctx) : IScene(ctx) {}
 

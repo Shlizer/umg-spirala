@@ -5,9 +5,15 @@
 using namespace std;
 
 struct AnimState {
-    float alpha;
-    float scale;
-    float x, y;
+    float alpha = 255.0f;
+    float scale = 1.0f;
+    float x = 0.0f;
+    float y = 0.0f;
+
+    AnimState() = default;
+    AnimState(float alpha, float scale, float x, float y)
+        : alpha(alpha), scale(scale), x(x), y(y) {
+    }
 };
 
 enum class AnimMode {
@@ -26,6 +32,7 @@ private:
     float time = 0.0f;
     float duration = 1.0f;
     bool yoyoReverse = false;
+    bool smoothstep = false;
 
     function<void()> onComplete = nullptr;
 
@@ -35,6 +42,10 @@ public:
         this->stateTargetA = state;
         this->mode = AnimMode::None;
         this->time = 0.0f;
+    }
+
+    void setSmooth(bool smoothstep) {
+        this->smoothstep = smoothstep;
     }
 
     void BlendTo(AnimState target, float duration, function<void()> callback = nullptr) {
@@ -107,6 +118,7 @@ private:
     }
 
     AnimState Lerp(AnimState from, AnimState to, float t) {
+        if (smoothstep) t = t * t * (3 - 2 * t);
         return {
             from.alpha + (to.alpha - from.alpha) * t,
             from.scale + (to.scale - from.scale) * t,

@@ -21,6 +21,7 @@ public:
     }
     ~IScene() = default;
     virtual string GetName() = 0;
+
     virtual void Activate() {
         this->Active = true;
     };

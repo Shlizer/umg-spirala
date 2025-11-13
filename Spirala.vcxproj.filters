@@ -65,5 +65,11 @@
     <ClInclude Include="StateAnimator.h">
       <Filter>Pliki nagłówkowe\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="FPSCounterScene.h">
+      <Filter>Pliki nagłówkowe\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayScene.h">
+      <Filter>Pliki nagłówkowe\Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

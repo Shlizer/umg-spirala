@@ -1,9 +1,12 @@
 #pragma once
+#include "Static.h"
 #include "GameContext.h"
 #include "IScene.h"
 #include "BackgroundScene.h"
 #include "MenuScene.h"
+#include "GameplayScene.h"
 #include "LogoScene.h"
+#include "FPSCounterScene.h"
 
 class Game {
     vector<unique_ptr<IScene>> scenes;
@@ -66,10 +69,13 @@ public:
 
         scenes.push_back(make_unique<BackgroundScene>(this->Context));
         scenes.push_back(make_unique<MenuScene>(this->Context));
+        scenes.push_back(make_unique<GameplayScene>(this->Context));
         scenes.push_back(make_unique<LogoScene>(this->Context));
+        scenes.push_back(make_unique<FPSCounterScene>(this->Context));
 
         FindScene(BackgroundScene::Name)->Activate();
         FindScene(LogoScene::Name)->Activate();
+        FindScene(FPSCounterScene::Name)->Activate();
     }
 
     void Run() {

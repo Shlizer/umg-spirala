@@ -1,9 +1,9 @@
 #pragma once
 #include <string>
 #include "IScene.h"
-#include "GameplayScene.h"
+#include "MenuScene.h"
 
-class MenuScene : public IScene {
+class GameplayScene : public IScene {
     bool isHiding = false;
 
 public:
@@ -15,20 +15,20 @@ public:
         this->isHiding = false;
     }
 
-    MenuScene(GameContext* ctx) : IScene(ctx) {
+    GameplayScene(GameContext* ctx) : IScene(ctx) {
         this->Context->OnSceneShow.AddListener([this](string newScene) {
-            if (newScene != MenuScene::Name) {
+            if (newScene != GameplayScene::Name) {
                 this->isHiding = true;
             }
-        });
+            });
     }
 
     void HandleEvent(const SDL_Event& event) override {
         if (this->isHiding) return;
 
         if (event.type == SDL_EVENT_KEY_DOWN) {
-            if (event.key.key == SDLK_RETURN) {
-                this->Context->OnSceneShow.Invoke("Gameplay");
+            if (event.key.key == SDLK_ESCAPE) {
+                this->Context->OnSceneShow.Invoke("Menu");
             }
         }
     }
@@ -37,4 +37,4 @@ public:
     }
 };
 
-const string MenuScene::Name = "Menu";
+const string GameplayScene::Name = "Gameplay";
