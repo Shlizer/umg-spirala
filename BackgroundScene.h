@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "IScene.h"
+#include "Static.h"
 
 class BackgroundScene : public IScene {
 	float time = 0.0f;
@@ -8,30 +9,31 @@ class BackgroundScene : public IScene {
 public:
 	static const string Name;
 
-	string GetName() override { return Name; }
+	string GetName() override { return this->Name; }
 
 	BackgroundScene(GameContext* ctx) : IScene(ctx) {}
 
 	void Update(float deltaTime) override {
-		time += deltaTime / 5;
+        this->time += deltaTime / 5;
 	}
 
     void Render() override {
-        float wave = (sin(time * 1.5f) + 1.0f) * 0.5f;
+        float wave = (sin(this->time * 1.5f) + 1.0f) * 0.5f;
 
-        float rOffset = sin(time * 1.2f) * 10.0f;
-        float gOffset = sin(time * 1.5f) * 15.0f;
-        float bOffset = sin(time * 1.8f) * 20.0f;
+        float rOffset = sin(this->time * 1.2f) * 10.0f;
+        float gOffset = sin(this->time * 1.5f) * 15.0f;
+        float bOffset = sin(this->time * 1.8f) * 20.0f;
 
-        for (int y = 0; y < Context->windowHeight; y++) {
-            float t = static_cast<float>(y) / static_cast<float>(Context->windowHeight);
+        for (int y = 0; y < this->Context->windowHeight; y++) {
+            float t = static_cast<float>(y) / static_cast<float>(this->Context->windowHeight);
 
-            Uint8 r = static_cast<Uint8>(20 + t * 30 + rOffset);
-            Uint8 g = static_cast<Uint8>(15 + t * 40 + gOffset);
-            Uint8 b = static_cast<Uint8>(40 + t * 80 + bOffset);
+            Color bgColor = CONFIG::COLOR_BACKGROUND(t);
+            bgColor.r += rOffset;
+            bgColor.g += gOffset;
+            bgColor.b += bOffset;
+            bgColor.Set(this->Context->renderer);
 
-            SDL_SetRenderDrawColor(Context->renderer, r, g, b, 255);
-            SDL_RenderLine(Context->renderer, 0, y, Context->windowWidth, y);
+            SDL_RenderLine(this->Context->renderer, 0, y, this->Context->windowWidth, y);
         }
     }
 };

@@ -22,6 +22,9 @@
     <Filter Include="Pliki nagłówkowe\Scenes">
       <UniqueIdentifier>{a7960248-fc2b-4f3b-94f1-493d162bc774}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki nagłówkowe\Helpers">
+      <UniqueIdentifier>{1495cc7a-7f36-43e8-9784-010f2078dc7f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -55,6 +58,12 @@
     </ClInclude>
     <ClInclude Include="LogoScene.h">
       <Filter>Pliki nagłówkowe\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuScene.h">
+      <Filter>Pliki nagłówkowe\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="StateAnimator.h">
+      <Filter>Pliki nagłówkowe\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

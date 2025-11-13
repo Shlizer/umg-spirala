@@ -12,20 +12,20 @@ public:
     using Listener = function<void(T...)>;
 
     int AddListener(Listener listener) {
-        listeners.push_back({ ++nextId, move(listener) });
-        return nextId;
+        this->listeners.push_back({ ++this->nextId, move(listener) });
+        return this->nextId;
     }
 
     void RemoveListener(int id) {
-        listeners.erase(
-            remove_if(listeners.begin(), listeners.end(),
+        this->listeners.erase(
+            remove_if(this->listeners.begin(), this->listeners.end(),
                 [id](auto& l) { return l.id == id; }),
-            listeners.end()
+            this->listeners.end()
         );
     }
 
     void Invoke(T... args) {
-        for (auto& l : listeners)
+        for (auto& l : this->listeners)
             l.func(args...);
     }
 

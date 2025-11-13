@@ -145,6 +145,8 @@
     <ClInclude Include="IScene.h" />
     <ClInclude Include="ITask.h" />
     <ClInclude Include="LogoScene.h" />
+    <ClInclude Include="MenuScene.h" />
+    <ClInclude Include="StateAnimator.h" />
     <ClInclude Include="Static.h" />
     <ClInclude Include="TaskManager.h" />
   </ItemGroup>

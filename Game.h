@@ -2,6 +2,7 @@
 #include "GameContext.h"
 #include "IScene.h"
 #include "BackgroundScene.h"
+#include "MenuScene.h"
 #include "LogoScene.h"
 
 class Game {
@@ -44,7 +45,6 @@ private:
 
         for (auto& scene : scenes) {
             if (scene->Active) {
-                //SDL_Log(scene->GetName().c_str());
                 scene->Render();
             }
         }
@@ -60,10 +60,12 @@ public:
         this->Context = gameContext;
 
         Context->OnSceneShow.AddListener([this](string sceneName) {
+            SDL_Log("Show scene: %s", sceneName.c_str());
             FindScene(sceneName)->Activate();
         });
 
         scenes.push_back(make_unique<BackgroundScene>(this->Context));
+        scenes.push_back(make_unique<MenuScene>(this->Context));
         scenes.push_back(make_unique<LogoScene>(this->Context));
 
         FindScene(BackgroundScene::Name)->Activate();
