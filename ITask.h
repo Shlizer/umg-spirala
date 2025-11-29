@@ -1,5 +1,4 @@
 #pragma once
-#include <SDL3/SDL_timer.h>
 
 class ITask {
 protected:
@@ -14,7 +13,10 @@ public:
             delayRemaining -= deltaTime;
             return false;
         }
+
+        Complete();
         return UpdateDelayed(deltaTime);
     };
+    virtual void Complete() {}
     virtual void Render() = 0;
 };

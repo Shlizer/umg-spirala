@@ -1,11 +1,8 @@
 #pragma once
-#include "Static.h"
 #include "GameContext.h"
 #include "IScene.h"
 #include "BackgroundScene.h"
-#include "MenuScene.h"
 #include "GameplayScene.h"
-#include "LogoScene.h"
 #include "FPSCounterScene.h"
 
 class Game {
@@ -13,7 +10,7 @@ class Game {
 
 private:
     IScene* FindScene(const string& name) {
-        for (auto& scene : scenes) {
+        for (auto& scene : this->scenes) {
             if (scene->GetName() == name) return scene.get();
         }
         return nullptr;
@@ -25,7 +22,7 @@ private:
             if (event.type == SDL_EVENT_QUIT) {
                 this->Context->isRunning = false;
             }
-            for (auto& scene : scenes) {
+            for (auto& scene : this->scenes) {
                 if (scene->Active) {
                     scene->HandleEvent(event);
                 }
@@ -34,7 +31,7 @@ private:
     }
 
     void Update(float deltaTime) {
-        for (auto& scene : scenes) {
+        for (auto& scene : this->scenes) {
             if (scene->Active) {
                 scene->Update(deltaTime);
             }
@@ -46,7 +43,7 @@ private:
         SDL_SetRenderDrawColor(this->Context->renderer, 0, 0, 0, 255);
         SDL_RenderClear(this->Context->renderer);
 
-        for (auto& scene : scenes) {
+        for (auto& scene : this->scenes) {
             if (scene->Active) {
                 scene->Render();
             }
@@ -63,20 +60,13 @@ public:
     Game(GameContext* gameContext) {
         this->Context = gameContext;
 
-        Context->OnSceneShow.AddListener([this](string sceneName) {
-            SDL_Log("Show scene: %s", sceneName.c_str());
-            FindScene(sceneName)->Activate();
-        });
+        this->scenes.push_back(make_unique<BackgroundScene>(this->Context));
+        this->scenes.push_back(make_unique<GameplayScene>(this->Context));
+        this->scenes.push_back(make_unique<FPSCounterScene>(this->Context));
 
-        scenes.push_back(make_unique<BackgroundScene>(this->Context));
-        scenes.push_back(make_unique<MenuScene>(this->Context));
-        scenes.push_back(make_unique<GameplayScene>(this->Context));
-        scenes.push_back(make_unique<LogoScene>(this->Context));
-        scenes.push_back(make_unique<FPSCounterScene>(this->Context));
-
-        FindScene(BackgroundScene::Name)->Activate();
-        FindScene(LogoScene::Name)->Activate();
-        FindScene(FPSCounterScene::Name)->Activate();
+        this->FindScene(BackgroundScene::Name)->Activate();
+        this->FindScene(GameplayScene::Name)->Activate();
+        this->FindScene(FPSCounterScene::Name)->Activate();
     }
 
     void Run() {
@@ -87,9 +77,9 @@ public:
             float deltaTime = (frameStart - lastFrameTime) / 1000.0f;
             lastFrameTime = frameStart;
 
-            HandleInput();
-            Update(deltaTime);
-            Render();
+            this->HandleInput();
+            this->Update(deltaTime);
+            this->Render();
         }
     }
 };

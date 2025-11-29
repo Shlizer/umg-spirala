@@ -2,8 +2,6 @@
 
 #include <SDL3/SDL.h>
 #include <string>
-#include "IEvent.h"
-#include "Static.h"
 #include "TaskManager.h"
 
 class GameContext {
@@ -18,6 +16,4 @@ public:
     int targetFPS = 60;
 
     unique_ptr<TaskManager> taskManager = make_unique<TaskManager>();
-
-    IEvent<string> OnSceneShow;
 };

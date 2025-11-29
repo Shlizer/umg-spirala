@@ -139,18 +139,20 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BackgroundScene.h" />
+    <ClInclude Include="CreateRoundedRectTexture.h" />
     <ClInclude Include="FPSCounterScene.h" />
     <ClInclude Include="GameplayScene.h" />
-    <ClInclude Include="IEvent.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameContext.h" />
     <ClInclude Include="IScene.h" />
     <ClInclude Include="ITask.h" />
-    <ClInclude Include="LogoScene.h" />
-    <ClInclude Include="MenuScene.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="StateAnimator.h" />
     <ClInclude Include="Static.h" />
+    <ClInclude Include="Task.h" />
+    <ClInclude Include="TaskCounter.h" />
     <ClInclude Include="TaskManager.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,15 +1,18 @@
 #pragma once
 #include <SDL3_ttf/SDL_ttf.h>
-#include <string>
-#include "Static.h"
 #include "IScene.h"
+#include "Static.h"
+#include "Utils.h"
+
+using namespace CONFIG;
+using namespace UTILS;
 
 class FPSCounterScene : public IScene {
     TTF_Font* font;
     SDL_Surface* textSurface;
     SDL_Texture* textTexture;
 
-    char buffer[32];
+    char buffer[32] = "";
     SDL_Color color = { 255,255,0,120 };
 
     Uint64 lastTime = 0;
@@ -32,10 +35,7 @@ public:
     string GetName() override { return Name; }
 
     FPSCounterScene(GameContext* ctx) : IScene(ctx) {
-        this->font = TTF_OpenFont(CONFIG::FONT_FACE_LATO_REGULAR, CONFIG::FONT_SIZE_DEBUG_FPS);
-        if (!this->font) {
-            SDL_Log("Failed to load font!");
-        }
+        this->font = loadFont(FONT_FACE_LATO_REGULAR, FONT_SIZE_DEBUG_FPS);
         this->lastTime = SDL_GetTicks();
     }
 
@@ -47,7 +47,7 @@ public:
 
     void HandleEvent(const SDL_Event& event) override {
         if (event.type == SDL_EVENT_KEY_DOWN) {
-            if (event.key.key == SDLK_F1) {
+            if (event.key.key == KEY_TOGGLE_FPS) {
                 this->visible = !this->visible;
 
                 if (this->visible) {
@@ -80,7 +80,7 @@ public:
 
     void Render() override {
         if (!this->textTexture || !this->visible) return;
-        SDL_FRect rect = { 10, 10, this->textSurface->w, this->textSurface->h };
+        SDL_FRect rect = { 10, 10, (float)this->textSurface->w, (float)this->textSurface->h };
         SDL_RenderTexture(this->Context->renderer, this->textTexture, nullptr, &rect);
     }
 };

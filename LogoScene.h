@@ -3,6 +3,7 @@
 #include "Static.h"
 #include "IScene.h"
 #include "StateAnimator.h"
+#include "Utils.h"
 
 class LogoScene : public IScene {
     TTF_Font* font;
@@ -16,7 +17,7 @@ public:
     string GetName() override { return Name; }
 
     LogoScene(GameContext* ctx) : IScene(ctx) {
-        this->font = TTF_OpenFont(CONFIG::FONT_FACE_STYLED, CONFIG::FONT_SIZE_LOGO);
+        this->font = UTILS::loadFont(CONFIG::FONT_FACE_STYLED, CONFIG::FONT_SIZE_LOGO);
         this->textSurface = TTF_RenderText_Blended(this->font, CONFIG::TITLE, 0, CONFIG::COLOR_LOGO.toColor());
         this->textTexture = SDL_CreateTextureFromSurface(this->Context->renderer, textSurface);
 

@@ -5,6 +5,7 @@
 #include <functional>
 #include "ITask.h"
 #include "GameContext.h"
+#include "Utils.h"
 
 class TaskCounter : public ITask {
     const float FONT_SIZE = 120;
@@ -23,10 +24,7 @@ class TaskCounter : public ITask {
 
 public:
     TaskCounter(GameContext* Context, const char* text, float duration, float delay = 0) : Context(Context), duration(duration), text(text), ITask(delay) {
-        this->font = TTF_OpenFont(CONFIG::FONT_FACE_STYLED, FONT_SIZE);
-        if (!this->font) {
-            SDL_Log("Failed to load font!");
-        }
+        this->font = UTILS::loadFont(CONFIG::FONT_FACE_STYLED, FONT_SIZE);
         this->animator.setSmooth(true);
         this->animator.SetState(CONFIG::ANIM_COUNTDOWN_START);
 
