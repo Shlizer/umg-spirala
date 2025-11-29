@@ -6,7 +6,7 @@
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
 #include "Utils.h"
-#include "Static.h"
+#include "Config.h"
 
 using namespace std;
 using namespace UTILS;
@@ -17,9 +17,9 @@ struct PlayerPosition {
 };
 
 enum class PlayerState {
-    WarmingUp,  // Przed startem, pokazywana strzałka
-    Playing,    // Aktywna gra
-    Dead        // Po kolizji
+    WarmingUp,  // Before start - show position
+    Playing,
+    Dead
 };
 
 class Player {
@@ -28,7 +28,6 @@ private:
     PlayerPosition position;
     PlayerState state = PlayerState::WarmingUp;
 
-    float prevX, prevY;
     float speed = 0.8f;
     float turnSpeed = 0.05f;
     Color color;
@@ -44,11 +43,11 @@ private:
         float centerX = this->Context->windowWidth * 0.5f;
         float centerY = this->Context->windowHeight * 0.5f;
 
-        // Odległość gracza od środka okna
+        // Player distance from center
         float dx = position.x - centerX;
         float dy = position.y - centerY;
 
-        // Skalowanie względem środka
+        // Scale from center
         p.x = centerX + dx * scale;
         p.y = centerY + dy * scale;
 
@@ -58,6 +57,7 @@ private:
 public:
     Player(GameContext* Context, Color color, SDL_Scancode keyLeft, SDL_Scancode keyRight)
         : Context(Context), color(color), keyLeft(keyLeft), keyRight(keyRight) {
+        mt19937 gen{ std::random_device{}() };
     }
 
     Player* SetRandomPosition(float edgeMargin, float playerDistance, const vector<Player*>& others) {
@@ -93,8 +93,6 @@ public:
                 position.x = x;
                 position.y = y;
                 position.angle = angle;
-                prevX = position.x;
-                prevY = position.y;
                 return this;
             }
         }
@@ -102,8 +100,6 @@ public:
         position.x = (minX + maxX) / 2;
         position.y = (minY + maxY) / 2;
         position.angle = distAngle(gen);
-        prevX = position.x;
-        prevY = position.y;
         return this;
     }
 
@@ -118,9 +114,6 @@ public:
     void Update(float deltaTime) {
         if (state != PlayerState::Playing) return;
 
-        prevX = this->position.x;
-        prevY = this->position.y;
-
         this->position.x += cosf(this->position.angle) * speed;
         this->position.y += sinf(this->position.angle) * speed;
 
@@ -132,18 +125,18 @@ public:
         SDL_SetRenderDrawColor(this->Context->renderer, color.r, color.g, color.b, color.a);
 
         for (size_t i = 1; i < trail.size(); i++) {
-            // Oblicz kierunek linii
+            // Line direction
             float dx = trail[i].x - trail[i - 1].x;
             float dy = trail[i].y - trail[i - 1].y;
             float len = sqrtf(dx * dx + dy * dy);
 
-            if (len < 0.001f) continue; // Pomiń jeśli punkty są w tym samym miejscu
+            if (len < 0.001f) continue; // Ignore if distance is too short
 
-            // Wektor prostopadły (obrócony o 90°)
+            // Perpendicural (90deg)
             float perpX = -dy / len;
             float perpY = dx / len;
 
-            // Rysuj linie przesunięte wzdłuż wektora prostopadłego
+            // Draw line alongside offset
             for (int offset = -lineThickness / 2; offset <= lineThickness / 2; offset++) {
                 float offsetX = perpX * offset;
                 float offsetY = perpY * offset;
@@ -158,13 +151,13 @@ public:
     void DrawStart(float scale, float alpha) {
         auto pos = GetScaledPosition(scale);
 
-        // Okrąg oznaczający pozycję startową
+        // Circle in start position
         SDL_SetRenderDrawColor(this->Context->renderer, color.r, color.g, color.b, static_cast<Uint8>(alpha));
 
         float radius = 8.0f;
         int segments = 16;
 
-        // Rysuj wypełniony okrąg
+        // Draw circle
         for (int i = 0; i < segments; i++) {
             float angle1 = (2.0f * static_cast<float>(PI) * i) / segments;
             float angle2 = (2.0f * static_cast<float>(PI) * (i + 1)) / segments;
@@ -176,23 +169,23 @@ public:
                 pos.y + sinf(angle2) * radius);
         }
 
-        // Strzałka wskazująca kierunek
+        // Direction arrow
         float arrowLength = 20.0f;
         float arrowWidth = 8.0f;
 
-        // Punkt końcowy strzałki (w kierunku angle)
+        // Arrow point
         float endX = pos.x + cosf(this->position.angle) * arrowLength;
         float endY = pos.y + sinf(this->position.angle) * arrowLength;
 
-        // Linia główna strzałki
+        // Arrow main line
         for (int i = -1; i <= 1; i++) {
             SDL_RenderLine(this->Context->renderer,
                 pos.x + i, pos.y,
                 endX + i, endY);
         }  
 
-        // Groty strzałki (dwa boki trójkąta)
-        float arrowAngle = 0.5f; // ~30 stopni
+        // Arrow side lines
+        float arrowAngle = 0.5f; // ~30 deg
         float leftX = endX - cosf(this->position.angle - arrowAngle) * arrowWidth;
         float leftY = endY - sinf(this->position.angle - arrowAngle) * arrowWidth;
         float rightX = endX - cosf(this->position.angle + arrowAngle) * arrowWidth;
@@ -209,7 +202,7 @@ public:
         this->state = PlayerState::Dead;
     }
 
-    // Gettery dla kolizji
+    // Getters for collision
     const vector<SDL_FPoint>& GetTrail() const { return trail; }
     int GetLineThickness() const { return lineThickness; }
     bool IsAlive() const { return state == PlayerState::Playing; }

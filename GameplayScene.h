@@ -5,25 +5,17 @@
 #include "Utils.h"
 #include "Player.h"
 #include "Task.h"
+#include "Config.h"
 
 using namespace std;
 using namespace CONFIG;
 
-struct StartPosition {
-    float x, y, angle;
-};
-
 class GameplayScene : public IScene {
-    bool isHiding = false;
     bool isPlaying = false;
-    float const TIME_SHOW = 2.0f;
-    const float FONT_SIZE = 120;
     SDL_Color colorBg = { 0,0,0,100 };
     SDL_Color colorBorder = { 255,255,255,255 };
 
     StateAnimator animator;
-    AnimState ANIM_CLOSED = { 0,	0.2f,	0,	0 };
-    AnimState ANIM_OPENED = { 180,	1.0f,	0,	0 };
 
     std::vector<Player*> players;
 
@@ -58,13 +50,13 @@ class GameplayScene : public IScene {
         this->isPlaying = false;
         this->SetupPlayers();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < COUNTER_SIZE; i++) {
             char buf[3];
-            sprintf_s(buf, "%d", 5 - i);
-            auto task = make_unique<TaskCounter>(this->Context, buf, 1.0f, i);
+            sprintf_s(buf, "%d", COUNTER_SIZE - i);
+            auto task = make_unique<TaskCounter>(this->Context, buf, COUNTER_TIME, i);
             this->Context->taskManager->AddTask(move(task));
         }
-        auto task = make_unique<TaskCounter>(this->Context, "Start!", 1.0f, 5);
+        auto task = make_unique<TaskCounter>(this->Context, "Start!", COUNTER_TIME, COUNTER_SIZE * COUNTER_TIME);
         this->Context->taskManager->AddTask(move(task));
 
         auto finishTask = make_unique<Task>(5, [this](float d) {},
@@ -83,20 +75,17 @@ public:
 
     GameplayScene(GameContext* ctx) : IScene(ctx) {
         this->animator.setSmooth(true);
-        this->animator.SetState(this->ANIM_CLOSED);
+        this->animator.SetState(ANIM_CLOSED);
     }
 
     void Activate() override {
         this->Active = true;
-        this->isHiding = false;
 
-        this->animator.BlendTo(this->ANIM_OPENED, 2.0f);
+        this->animator.BlendTo(ANIM_OPENED, 2.0f);
         this->Restart();
     }
 
     void HandleEvent(const SDL_Event& event) override {
-        if (this->isHiding) return;
-
         if (event.type == SDL_EVENT_KEY_DOWN) {
             if (event.key.key == KEY_EXIT) {
                 this->Context->isRunning = false;

@@ -35,7 +35,7 @@
     <ClInclude Include="GameContext.h">
       <Filter>Pliki nagłówkowe\Config</Filter>
     </ClInclude>
-    <ClInclude Include="Static.h">
+    <ClInclude Include="Config.h">
       <Filter>Pliki nagłówkowe\Config</Filter>
     </ClInclude>
     <ClInclude Include="TaskManager.h">
@@ -66,9 +66,6 @@
       <Filter>Pliki nagłówkowe\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
-      <Filter>Pliki nagłówkowe\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="CreateRoundedRectTexture.h">
       <Filter>Pliki nagłówkowe\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">

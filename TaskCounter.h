@@ -6,11 +6,11 @@
 #include "ITask.h"
 #include "GameContext.h"
 #include "Utils.h"
+#include "Config.h"
+
+using namespace CONFIG;
 
 class TaskCounter : public ITask {
-    const float FONT_SIZE = 120;
-    SDL_Color color = { 255,255,255,255 };
-
     bool animationStarted = false;
     float duration;
     float elapsed = 0;
@@ -24,11 +24,11 @@ class TaskCounter : public ITask {
 
 public:
     TaskCounter(GameContext* Context, const char* text, float duration, float delay = 0) : Context(Context), duration(duration), text(text), ITask(delay) {
-        this->font = UTILS::loadFont(CONFIG::FONT_FACE_STYLED, FONT_SIZE);
+        this->font = UTILS::loadFont(CONFIG::FONT_FACE_STYLED, FONT_SIZE_COUNTER);
         this->animator.setSmooth(true);
         this->animator.SetState(CONFIG::ANIM_COUNTDOWN_START);
 
-        SDL_Surface* surface = TTF_RenderText_Blended(this->font, text, 0, this->color);
+        SDL_Surface* surface = TTF_RenderText_Blended(this->font, text, 0, COUNTER_COLOR.toColor());
         this->textTexture = SDL_CreateTextureFromSurface(Context->renderer, surface);
         SDL_DestroySurface(surface);
     }

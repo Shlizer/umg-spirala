@@ -2,7 +2,7 @@
 #include <SDL3_ttf/SDL_ttf.h>
 
 namespace UTILS {
-	struct Color { // +
+	struct Color {
 		uint8_t r, g, b, a;
 
 		void Set(SDL_Renderer* renderer) {
@@ -24,7 +24,7 @@ namespace UTILS {
 		SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, a);
 	}
 
-	TTF_Font* loadFont(const char* fontFace, float fontSize) { // +
+	TTF_Font* loadFont(const char* fontFace, float fontSize) {
 		TTF_Font* font = TTF_OpenFont(fontFace, fontSize);
 		if (!font) {
 			SDL_Log("Failed to load font!");
@@ -33,7 +33,7 @@ namespace UTILS {
 		return font;
 	}
 
-	template<typename T> // +
+	template<typename T>
 	T clamp(const T& v, const T& lo, const T& hi)
 	{
 		return (v < lo) ? lo : (v > hi) ? hi : v;

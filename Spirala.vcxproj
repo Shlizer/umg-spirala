@@ -139,7 +139,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BackgroundScene.h" />
-    <ClInclude Include="CreateRoundedRectTexture.h" />
     <ClInclude Include="FPSCounterScene.h" />
     <ClInclude Include="GameplayScene.h" />
     <ClInclude Include="Game.h" />
@@ -148,7 +147,7 @@
     <ClInclude Include="ITask.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="StateAnimator.h" />
-    <ClInclude Include="Static.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Task.h" />
     <ClInclude Include="TaskCounter.h" />
     <ClInclude Include="TaskManager.h" />

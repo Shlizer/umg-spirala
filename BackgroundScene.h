@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL3/SDL_render.h>
 #include "IScene.h"
-#include "Static.h"
+#include "Config.h"
 #include "Utils.h"
 
 using namespace std;

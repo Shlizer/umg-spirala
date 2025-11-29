@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL3_ttf/SDL_ttf.h>
 #include "IScene.h"
-#include "Static.h"
+#include "Config.h"
 #include "Utils.h"
 
 using namespace CONFIG;
