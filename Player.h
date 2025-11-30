@@ -28,8 +28,7 @@ private:
     PlayerPosition position;
     PlayerState state = PlayerState::WarmingUp;
 
-    Color color;
-    SDL_Scancode keyLeft, keyRight;
+    PlayerInfo info;
 
     vector<SDL_FPoint> trail;
     mt19937 gen;
@@ -52,12 +51,11 @@ private:
     }
 
 public:
-    Player(GameContext* Context, Color color, SDL_Scancode keyLeft, SDL_Scancode keyRight)
-        : Context(Context), color(color), keyLeft(keyLeft), keyRight(keyRight) {
-        mt19937 gen{ std::random_device{}() };
+    Player(GameContext* Context, PlayerInfo info) : Context(Context), info(info) {
     }
 
     Player* SetRandomPosition(float edgeMargin, float playerDistance, const vector<Player*>& others) {
+        mt19937 gen{ random_device{}() };
         float minX = SCENE_GAMEPLAY_PADDING_L + edgeMargin;
         float maxX = this->Context->windowWidth - SCENE_GAMEPLAY_PADDING_R - edgeMargin;
         float minY = SCENE_GAMEPLAY_PADDING_T + edgeMargin;
@@ -104,8 +102,8 @@ public:
 
     void HandleInput(const bool* keystate) {
         if (state != PlayerState::Playing) return;
-        if (keystate[keyLeft]) this->position.angle -= PLAYER_TURN_SPEED;
-        if (keystate[keyRight]) this->position.angle += PLAYER_TURN_SPEED;
+        if (keystate[info.keyLeft]) this->position.angle -= PLAYER_TURN_SPEED;
+        if (keystate[info.keyRight]) this->position.angle += PLAYER_TURN_SPEED;
     }
 
     void Update(float deltaTime) {
@@ -119,7 +117,7 @@ public:
 
     void Draw() {
         if (trail.size() < 2) return;
-        SDL_SetRenderDrawColor(this->Context->renderer, color.r, color.g, color.b, color.a);
+        SDL_SetRenderDrawColor(this->Context->renderer, info.color.r, info.color.g, info.color.b, info.color.a);
 
         for (size_t i = 1; i < trail.size(); i++) {
             // Line direction
@@ -149,7 +147,7 @@ public:
         auto pos = GetScaledPosition(scale);
 
         // Circle in start position
-        SDL_SetRenderDrawColor(this->Context->renderer, color.r, color.g, color.b, static_cast<Uint8>(alpha));
+        SDL_SetRenderDrawColor(this->Context->renderer, info.color.r, info.color.g, info.color.b, static_cast<Uint8>(alpha));
 
         float radius = 8.0f;
         int segments = 16;

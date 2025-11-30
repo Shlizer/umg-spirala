@@ -17,33 +17,21 @@ class GameplayScene : public IScene {
 
     StateAnimator animator;
 
-    std::vector<Player*> players;
+    vector<Player*> players;
 
     void SetupPlayers() {
         players.clear();
 
-        Player* p1 = new Player(
-            this->Context,
-            COLOR_PLAYER_1,
-            KEY_PLAYER_1_LEFT,
-            KEY_PLAYER_1_RIGHT
-        );
-        Player* p2 = new Player(
-            this->Context,
-            COLOR_PLAYER_2,
-            KEY_PLAYER_2_LEFT,
-            KEY_PLAYER_2_RIGHT
-        );
-
-        p1->SetRandomPosition(SCENE_GAMEPLAY_SPAWN_DISTANCE_EDGE,
-            SCENE_GAMEPLAY_SPAWN_DISTANCE_PLAYER,
-            players);
-        players.push_back(p1);
-
-        p2->SetRandomPosition(SCENE_GAMEPLAY_SPAWN_DISTANCE_EDGE,
-            SCENE_GAMEPLAY_SPAWN_DISTANCE_PLAYER,
-            players);
-        players.push_back(p2);
+        for (auto& playerInfo : PLAYERS) {
+            Player* p = new Player(
+                this->Context,
+                playerInfo
+            );
+            p->SetRandomPosition(SCENE_GAMEPLAY_SPAWN_DISTANCE_EDGE,
+                SCENE_GAMEPLAY_SPAWN_DISTANCE_PLAYER,
+                players);
+            players.push_back(p);
+        }
     }
 
     void Restart() {

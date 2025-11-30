@@ -3,7 +3,13 @@
 #include "StateAnimator.h"
 #include "Utils.h"
 
+using namespace std;
 using namespace UTILS;
+
+struct PlayerInfo {
+	Color color;
+	SDL_Scancode keyLeft, keyRight;
+};
 
 namespace CONFIG {
 	const double PI = 3.14159265358979323846;
@@ -11,15 +17,20 @@ namespace CONFIG {
 	const char* TITLE = "Spirala";
 
 	/*****************************************
+	 *  P L A Y E R S
+	 */
+	PlayerInfo PLAYERS[3] = {
+		{ Color({ 255, 255, 0, 255 }), SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT},
+		{ Color({ 255, 0, 255, 255 }), SDL_SCANCODE_A, SDL_SCANCODE_S},
+		{ Color({ 0, 255, 255, 255 }), SDL_SCANCODE_N, SDL_SCANCODE_M},
+	};
+
+	/*****************************************
 	 *  K E Y C O D E S
 	 */
 	const SDL_Keycode KEY_TOGGLE_FPS = SDLK_F1;
 	const SDL_Keycode KEY_RESTART = SDLK_RETURN;
 	const SDL_Keycode KEY_EXIT = SDLK_ESCAPE;
-	const SDL_Scancode KEY_PLAYER_1_LEFT = SDL_SCANCODE_LEFT;
-	const SDL_Scancode KEY_PLAYER_1_RIGHT = SDL_SCANCODE_RIGHT;
-	const SDL_Scancode KEY_PLAYER_2_LEFT = SDL_SCANCODE_A;
-	const SDL_Scancode KEY_PLAYER_2_RIGHT = SDL_SCANCODE_D;
 
 	/*****************************************
 	 *  F O N T   F A C E S
@@ -52,9 +63,9 @@ namespace CONFIG {
 	/*****************************************
 	 *  P L A Y E R
 	 */
-	const float PLAYER_SPEED = 1.4f;
-	const float PLAYER_TURN_SPEED = 0.05f;
-	const int PLAYER_THICKNESS = 5;
+	const float PLAYER_SPEED = 0.35f;
+	const float PLAYER_TURN_SPEED = 0.02f;
+	const int PLAYER_THICKNESS = 3;
 
 	/*****************************************
 	 *  A N I M A T I O N   S T A T E S
@@ -87,9 +98,6 @@ namespace CONFIG {
 	float COLOR_BACKGROUND_G_OFFSET = 15.0f;
 	float COLOR_BACKGROUND_B_OFFSET = 20.0f;
 
-	const Color COLOR_PLAYER_1 = Color({ 255, 255, 0, 255 });
-	const Color COLOR_PLAYER_2 = Color({ 255, 0, 255, 255 });
-
 	/*****************************************
 	 *  S C E N E   -   G A M E P L A Y
 	 */
@@ -98,6 +106,6 @@ namespace CONFIG {
 	float SCENE_GAMEPLAY_PADDING_T = 90;
 	float SCENE_GAMEPLAY_PADDING_B = 50;
 
-	float SCENE_GAMEPLAY_SPAWN_DISTANCE_EDGE = 100; // minimal distance from edge where player can spawn
+	float SCENE_GAMEPLAY_SPAWN_DISTANCE_EDGE = 200; // minimal distance from edge where player can spawn
 	float SCENE_GAMEPLAY_SPAWN_DISTANCE_PLAYER = 100; // minimal distance from other players where player can spawn
 }
