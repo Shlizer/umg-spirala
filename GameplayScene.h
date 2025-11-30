@@ -59,7 +59,7 @@ class GameplayScene : public IScene {
         auto task = make_unique<TaskCounter>(this->Context, "Start!", COUNTER_TIME, COUNTER_SIZE * COUNTER_TIME);
         this->Context->taskManager->AddTask(move(task));
 
-        auto finishTask = make_unique<Task>(5, [this](float d) {},
+        auto finishTask = make_unique<Task>(COUNTER_SIZE, [this](float d) {},
             [this]() {
                 this->isPlaying = true;
                 for (auto* p : players) {

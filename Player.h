@@ -28,14 +28,11 @@ private:
     PlayerPosition position;
     PlayerState state = PlayerState::WarmingUp;
 
-    float speed = 0.8f;
-    float turnSpeed = 0.05f;
     Color color;
     SDL_Scancode keyLeft, keyRight;
 
     vector<SDL_FPoint> trail;
     mt19937 gen;
-    int lineThickness = 5;
 
     SDL_FPoint GetScaledPosition(float scale) const {
         SDL_FPoint p;
@@ -107,15 +104,15 @@ public:
 
     void HandleInput(const bool* keystate) {
         if (state != PlayerState::Playing) return;
-        if (keystate[keyLeft]) this->position.angle -= turnSpeed;
-        if (keystate[keyRight]) this->position.angle += turnSpeed;
+        if (keystate[keyLeft]) this->position.angle -= PLAYER_TURN_SPEED;
+        if (keystate[keyRight]) this->position.angle += PLAYER_TURN_SPEED;
     }
 
     void Update(float deltaTime) {
         if (state != PlayerState::Playing) return;
 
-        this->position.x += cosf(this->position.angle) * speed;
-        this->position.y += sinf(this->position.angle) * speed;
+        this->position.x += cosf(this->position.angle) * PLAYER_SPEED;
+        this->position.y += sinf(this->position.angle) * PLAYER_SPEED;
 
         trail.push_back({ this->position.x, this->position.y });
     }
@@ -137,7 +134,7 @@ public:
             float perpY = dx / len;
 
             // Draw line alongside offset
-            for (int offset = -lineThickness / 2; offset <= lineThickness / 2; offset++) {
+            for (int offset = -PLAYER_THICKNESS / 2; offset <= PLAYER_THICKNESS / 2; offset++) {
                 float offsetX = perpX * offset;
                 float offsetY = perpY * offset;
 
@@ -204,7 +201,7 @@ public:
 
     // Getters for collision
     const vector<SDL_FPoint>& GetTrail() const { return trail; }
-    int GetLineThickness() const { return lineThickness; }
+    int GetLineThickness() const { return PLAYER_THICKNESS; }
     bool IsAlive() const { return state == PlayerState::Playing; }
     float GetX() const { return this->position.x; }
     float GetY() const { return this->position.y; }

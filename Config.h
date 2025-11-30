@@ -46,8 +46,15 @@ namespace CONFIG {
 	 *  C O U N T E R
 	 */
 	const Color COUNTER_COLOR = Color({ 255, 255, 255, 255 });
-	const int COUNTER_SIZE = 5;
+	const int COUNTER_SIZE = 3;
 	const float COUNTER_TIME = 1.0f;
+
+	/*****************************************
+	 *  P L A Y E R
+	 */
+	const float PLAYER_SPEED = 1.4f;
+	const float PLAYER_TURN_SPEED = 0.05f;
+	const int PLAYER_THICKNESS = 5;
 
 	/*****************************************
 	 *  A N I M A T I O N   S T A T E S
