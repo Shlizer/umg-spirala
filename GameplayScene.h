@@ -98,50 +98,49 @@ public:
         for (auto* player : players) {
             if (!player->IsAlive()) continue;
 
-                player->HandleInput(keystate);
-                player->Update(deltaTime);
+            player->HandleInput(keystate);
+            player->Update(deltaTime);
 
-                float minX = SCENE_GAMEPLAY_PADDING_L;
-                float minY = SCENE_GAMEPLAY_PADDING_T;
-                float maxX = this->Context->windowWidth - SCENE_GAMEPLAY_PADDING_R;
-                float maxY = this->Context->windowHeight - SCENE_GAMEPLAY_PADDING_B;
+            float minX = SCENE_GAMEPLAY_PADDING_L;
+            float minY = SCENE_GAMEPLAY_PADDING_T;
+            float maxX = this->Context->windowWidth - SCENE_GAMEPLAY_PADDING_R;
+            float maxY = this->Context->windowHeight - SCENE_GAMEPLAY_PADDING_B;
 
-                if (player->GetX() < minX || player->GetX() > maxX ||
-                    player->GetY() < minY || player->GetY() > maxY) {
-                    player->Kill();
-                    continue;
+            if (player->GetX() < minX || player->GetX() > maxX ||
+                player->GetY() < minY || player->GetY() > maxY) {
+                player->Kill();
+                continue;
+            }
+
+            bool collision = false;
+            for (const auto* other : players) {
+                const auto& trail = other->GetTrail();
+                if (trail.size() < 2) continue;
+
+                size_t endIdx;
+                if (other == player) {
+                    if (trail.size() <= 30) continue;
+                    endIdx = trail.size() - 10;
+                }
+                else {
+                    endIdx = trail.size();
                 }
 
-                bool collision = false;
-                for (const auto* other : players) {
-                    const auto& trail = other->GetTrail();
-                    if (trail.size() < 2) continue;
+                for (size_t i = 0; i < endIdx; i++) {
+                    float dx = trail[i].x - player->GetX();
+                    float dy = trail[i].y - player->GetY();
+                    float dist = sqrtf(dx * dx + dy * dy);
 
-                    size_t endIdx;
-                    if (other == player) {
-                        if (trail.size() <= 30) continue;
-                        endIdx = trail.size() - 10;
+                    if (dist < other->GetLineThickness()) {
+                        collision = true;
+                        break;
                     }
-                    else {
-                        endIdx = trail.size();
-                    }
-
-                    for (size_t i = 0; i < endIdx; i++) {
-                        float dx = trail[i].x - player->GetX();
-                        float dy = trail[i].y - player->GetY();
-                        float dist = sqrtf(dx * dx + dy * dy);
-
-                        if (dist < other->GetLineThickness()) {
-                            collision = true;
-                            break;
-                        }
-                    }
-                    if (collision) break;
                 }
+                if (collision) break;
+            }
 
-                if (collision) {
-                    player->Kill();
-                }
+            if (collision) {
+                player->Kill();
             }
         }
     }
