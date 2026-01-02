@@ -20,16 +20,13 @@ class GameplayScene : public IScene {
     vector<Player*> players;
 
     void SetupPlayers() {
+        for (auto* p : players) delete p;
         players.clear();
 
         for (auto& playerInfo : PLAYERS) {
-            Player* p = new Player(
-                this->Context,
-                playerInfo
-            );
+            Player* p = new Player(this->Context, playerInfo);
             p->SetRandomPosition(SCENE_GAMEPLAY_SPAWN_DISTANCE_EDGE,
-                SCENE_GAMEPLAY_SPAWN_DISTANCE_PLAYER,
-                players);
+                SCENE_GAMEPLAY_SPAWN_DISTANCE_PLAYER, players);
             players.push_back(p);
         }
     }
@@ -50,9 +47,7 @@ class GameplayScene : public IScene {
         auto finishTask = make_unique<Task>(COUNTER_SIZE, [this](float d) {},
             [this]() {
                 this->isPlaying = true;
-                for (auto* p : players) {
-                    p->Start();
-                }
+                for (auto* p : players) p->Start();
             });
         this->Context->taskManager->AddTask(move(finishTask));
     }
@@ -64,6 +59,10 @@ public:
     GameplayScene(GameContext* ctx) : IScene(ctx) {
         this->animator.setSmooth(true);
         this->animator.SetState(ANIM_CLOSED);
+    }
+
+    ~GameplayScene() {
+        for (auto* p : players) delete p;
     }
 
     void Activate() override {
@@ -97,7 +96,8 @@ public:
         if (!isPlaying) return;
 
         for (auto* player : players) {
-            if (player->IsAlive()) {
+            if (!player->IsAlive()) continue;
+
                 player->HandleInput(keystate);
                 player->Update(deltaTime);
 

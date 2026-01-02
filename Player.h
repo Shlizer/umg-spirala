@@ -12,6 +12,8 @@ using namespace std;
 using namespace UTILS;
 using namespace CONFIG;
 
+const int MAX_SPAWN_ATTEMPTS = 100;
+
 struct PlayerPosition {
     float x, y, angle;
 };
@@ -34,25 +36,17 @@ private:
     mt19937 gen;
 
     SDL_FPoint GetScaledPosition(float scale) const {
-        SDL_FPoint p;
-
         float centerX = this->Context->windowWidth * 0.5f;
         float centerY = this->Context->windowHeight * 0.5f;
 
         // Player distance from center
         float dx = position.x - centerX;
         float dy = position.y - centerY;
-
-        // Scale from center
-        p.x = centerX + dx * scale;
-        p.y = centerY + dy * scale;
-
-        return p;
+        return { centerX + dx * scale, centerY + dy * scale };
     }
 
 public:
-    Player(GameContext* Context, PlayerInfo info) : Context(Context), info(info) {
-    }
+    Player(GameContext* Context, PlayerInfo info) : Context(Context), info(info) {}
 
     Player* SetRandomPosition(float edgeMargin, float playerDistance, const vector<Player*>& others) {
         mt19937 gen{ random_device{}() };
@@ -65,9 +59,7 @@ public:
         uniform_real_distribution<float> distY(minY, maxY);
         uniform_real_distribution<float> distAngle(0, 2 * static_cast<float>(PI));
 
-        int maxAttempts = 100;
-
-        for (int attempt = 0; attempt < maxAttempts; attempt++) {
+        for (int attempt = 0; attempt < MAX_SPAWN_ATTEMPTS; attempt++) {
             float x = distX(gen);
             float y = distY(gen);
             float angle = distAngle(gen);
@@ -156,10 +148,8 @@ public:
             float angle2 = (2.0f * static_cast<float>(PI) * (i + 1)) / segments;
 
             SDL_RenderLine(this->Context->renderer,
-                pos.x + cosf(angle1) * radius,
-                pos.y + sinf(angle1) * radius,
-                pos.x + cosf(angle2) * radius,
-                pos.y + sinf(angle2) * radius);
+                pos.x + cosf(angle1) * radius, pos.y + sinf(angle1) * radius,
+                pos.x + cosf(angle2) * radius, pos.y + sinf(angle2) * radius);
         }
 
         // Direction arrow
@@ -172,28 +162,21 @@ public:
 
         // Arrow main line
         for (int i = -1; i <= 1; i++) {
-            SDL_RenderLine(this->Context->renderer,
-                pos.x + i, pos.y,
-                endX + i, endY);
+            SDL_RenderLine(this->Context->renderer, pos.x + i, pos.y, endX + i, endY);
         }  
 
         // Arrow side lines
         float arrowAngle = 0.5f; // ~30 deg
-        float leftX = endX - cosf(this->position.angle - arrowAngle) * arrowWidth;
-        float leftY = endY - sinf(this->position.angle - arrowAngle) * arrowWidth;
-        float rightX = endX - cosf(this->position.angle + arrowAngle) * arrowWidth;
-        float rightY = endY - sinf(this->position.angle + arrowAngle) * arrowWidth;
-
-        SDL_RenderLine(this->Context->renderer, endX, endY, leftX, leftY);
-        SDL_RenderLine(this->Context->renderer, endX, endY, rightX, rightY);
+        SDL_RenderLine(this->Context->renderer, endX, endY,
+            endX - cosf(this->position.angle - arrowAngle) * arrowWidth,
+            endY - sinf(this->position.angle - arrowAngle) * arrowWidth);
+        SDL_RenderLine(this->Context->renderer, endX, endY,
+            endX - cosf(this->position.angle + arrowAngle) * arrowWidth,
+            endY - sinf(this->position.angle + arrowAngle) * arrowWidth);
     }
 
-    void Start() {
-        this->state = PlayerState::Playing;
-    }
-    void Kill() {
-        this->state = PlayerState::Dead;
-    }
+    void Start() { this->state = PlayerState::Playing; }
+    void Kill() { this->state = PlayerState::Dead; }
 
     // Getters for collision
     const vector<SDL_FPoint>& GetTrail() const { return trail; }
