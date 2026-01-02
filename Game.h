@@ -3,6 +3,7 @@
 #include "IScene.h"
 #include "BackgroundScene.h"
 #include "GameplayScene.h"
+#include "KillLogScene.h"
 #include "FPSCounterScene.h"
 
 class Game {
@@ -62,10 +63,12 @@ public:
 
         this->scenes.push_back(make_unique<BackgroundScene>(this->Context));
         this->scenes.push_back(make_unique<GameplayScene>(this->Context));
+        this->scenes.push_back(make_unique<KillLogScene>(this->Context));
         this->scenes.push_back(make_unique<FPSCounterScene>(this->Context));
 
         this->FindScene(BackgroundScene::Name)->Activate();
         this->FindScene(GameplayScene::Name)->Activate();
+        this->FindScene(KillLogScene::Name)->Activate();
         this->FindScene(FPSCounterScene::Name)->Activate();
     }
 

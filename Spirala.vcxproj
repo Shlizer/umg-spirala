@@ -146,11 +146,13 @@
     <ClInclude Include="GameContext.h" />
     <ClInclude Include="IScene.h" />
     <ClInclude Include="ITask.h" />
+    <ClInclude Include="KillLogScene.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="StateAnimator.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Task.h" />
     <ClInclude Include="TaskCounter.h" />
+    <ClInclude Include="TaskEndGame.h" />
     <ClInclude Include="TaskManager.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>

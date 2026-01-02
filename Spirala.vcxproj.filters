@@ -77,5 +77,11 @@
     <ClInclude Include="CollisionSystem.h">
       <Filter>Pliki nagłówkowe\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="KillLogScene.h">
+      <Filter>Pliki nagłówkowe\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskEndGame.h">
+      <Filter>Pliki nagłówkowe\Tasks</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

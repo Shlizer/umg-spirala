@@ -5,6 +5,10 @@
 #include "TaskManager.h"
 #include "Config.h"
 
+struct KillEvent {
+    int victimId;
+};
+
 class GameContext {
 public:
     SDL_Renderer* renderer = nullptr;
@@ -17,4 +21,10 @@ public:
     int targetFPS = 60;
 
     unique_ptr<TaskManager> taskManager = make_unique<TaskManager>();
+
+    std::vector<KillEvent> killLog;
+    int aliveCount = 0;
+    int totalPlayers = 0;
+    int winnerId = -1;
+    SDL_Color winnerColor = { 255,255,255,255 };
 };

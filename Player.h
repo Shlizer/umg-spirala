@@ -194,12 +194,18 @@ public:
         this->isDrawing = true;
     }
 
-    void Kill() { 
-        SDL_Log("Player %d is DEAD", playerId);
+    void Kill() {
         this->state = PlayerState::Dead;
+
+        KillEvent event;
+        event.victimId = this->playerId;
+        this->Context->killLog.push_back(event);
+        this->Context->aliveCount--;
     }
 
     bool IsAlive() const { return state == PlayerState::Playing; }
     float GetX() const { return this->position.x; }
     float GetY() const { return this->position.y; }
+    int GetId() const { return this->playerId; }
+    SDL_Color GetColor() const { return info.color.toColor(); }
 };

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "TaskCounter.h"
+#include "TaskEndGame.h"
 #include "IScene.h"
 #include "Utils.h"
 #include "Player.h"
@@ -13,6 +14,7 @@ using namespace CONFIG;
 
 class GameplayScene : public IScene {
     bool isPlaying = false;
+    bool gameEnded = false;
     SDL_Color colorBg = { 0, 0, 0, 100 };
     SDL_Color colorBorder = { 255, 255, 255, 255 };
 
@@ -24,6 +26,12 @@ class GameplayScene : public IScene {
         for (auto* p : players) delete p;
         players.clear();
         collision.Clear();
+
+        this->Context->killLog.clear();
+        this->Context->aliveCount = 0;
+        this->Context->totalPlayers = 0;
+        this->Context->winnerId = -1;
+
         int id = 0;
 
         for (auto& playerInfo : PLAYERS) {
@@ -31,11 +39,14 @@ class GameplayScene : public IScene {
             p->SetRandomPosition(SCENE_GAMEPLAY_SPAWN_DISTANCE_EDGE,
                 SCENE_GAMEPLAY_SPAWN_DISTANCE_PLAYER, players);
             players.push_back(p);
+            this->Context->totalPlayers++;
+            this->Context->aliveCount++;
         }
     }
 
     void Restart() {
         this->isPlaying = false;
+        this->gameEnded = false;
         this->SetupPlayers();
 
         for (int i = 0; i < COUNTER_SIZE; i++) {
@@ -89,10 +100,10 @@ public:
     void Update(float deltaTime) override {
         this->animator.Update(deltaTime);
 
+        if (!isPlaying || gameEnded) return;
+
         const bool* keystate = SDL_GetKeyboardState(nullptr);
-
-        if (!isPlaying) return;
-
+        
         for (auto* player : players) {
             if (!player->IsAlive()) continue;
 
@@ -112,6 +123,31 @@ public:
 
             if (player->CheckCollisionAndDraw(collision)) {
                 player->Kill();
+            }
+
+            if (this->Context->aliveCount <= 1 && !gameEnded) {
+                gameEnded = true;
+
+                char buf[32];
+                if (this->Context->totalPlayers == 1 && this->Context->aliveCount == 0) {
+                    sprintf_s(buf, "You lost!");
+                }
+                else if (this->Context->aliveCount == 1) {
+                    for (auto* p : players) {
+                        if (p->IsAlive()) {
+                            this->Context->winnerId = p->GetId();
+                            this->Context->winnerColor = p->GetColor();
+                            break;
+                        }
+                    }
+                    sprintf_s(buf, "Player %d won!", this->Context->winnerId + 1);
+                }
+                else {
+                    sprintf_s(buf, "Draw!");
+                }
+
+                auto task = make_unique<TaskEndGame>(this->Context, buf);
+                this->Context->taskManager->AddTask(move(task));
             }
         }
     }
