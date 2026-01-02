@@ -15,6 +15,8 @@ namespace CONFIG {
 	const double PI = 3.14159265358979323846;
 
 	const char* TITLE = "Spirala";
+	const int WIDTH = 1280;
+	const int HEIGHT = 720;
 
 	/*****************************************
 	 *  P L A Y E R S
