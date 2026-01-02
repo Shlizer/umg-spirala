@@ -28,8 +28,7 @@ class GameplayScene : public IScene {
         collision.Clear();
 
         this->Context->killLog.clear();
-        this->Context->aliveCount = 0;
-        this->Context->totalPlayers = 0;
+        this->Context->aliveCount = CONFIG::PLAYER_COUNT;
         this->Context->winnerId = -1;
 
         int id = 0;
@@ -39,8 +38,6 @@ class GameplayScene : public IScene {
             p->SetRandomPosition(SCENE_GAMEPLAY_SPAWN_DISTANCE_EDGE,
                 SCENE_GAMEPLAY_SPAWN_DISTANCE_PLAYER, players);
             players.push_back(p);
-            this->Context->totalPlayers++;
-            this->Context->aliveCount++;
         }
     }
 
@@ -105,7 +102,14 @@ public:
         const bool* keystate = SDL_GetKeyboardState(nullptr);
         
         for (auto* player : players) {
-            if (!player->IsAlive()) continue;
+            if (!player->IsAlive()) {
+                if (CONFIG::PLAYER_COUNT == 1) {
+                    gameEnded = true;
+                    auto task = make_unique<TaskEndGame>(this->Context, "You lost!");
+                    this->Context->taskManager->AddTask(move(task));
+                }
+                continue;
+            }
 
             player->HandleInput(keystate);
             player->Update(deltaTime);
@@ -125,14 +129,12 @@ public:
                 player->Kill();
             }
 
+            if (CONFIG::PLAYER_COUNT == 1) continue;
+
             if (this->Context->aliveCount <= 1 && !gameEnded) {
                 gameEnded = true;
 
-                char buf[32];
-                if (this->Context->totalPlayers == 1 && this->Context->aliveCount == 0) {
-                    sprintf_s(buf, "You lost!");
-                }
-                else if (this->Context->aliveCount == 1) {
+                if (this->Context->aliveCount == 1) {
                     for (auto* p : players) {
                         if (p->IsAlive()) {
                             this->Context->winnerId = p->GetId();
@@ -140,14 +142,15 @@ public:
                             break;
                         }
                     }
-                    sprintf_s(buf, "Player %d won!", this->Context->winnerId + 1);
+                    char buf[16];
+                    sprintf_s(buf, "%d", this->Context->winnerId + 1);
+                    auto task = make_unique<TaskEndGame>(this->Context, "Player ", buf, " won!", this->Context->winnerColor);
+                    this->Context->taskManager->AddTask(move(task));
                 }
                 else {
-                    sprintf_s(buf, "Draw!");
+                    auto task = make_unique<TaskEndGame>(this->Context, "Draw!");
+                    this->Context->taskManager->AddTask(move(task));
                 }
-
-                auto task = make_unique<TaskEndGame>(this->Context, buf);
-                this->Context->taskManager->AddTask(move(task));
             }
         }
     }

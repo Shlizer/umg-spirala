@@ -14,6 +14,13 @@ public:
         tasks.push_back(std::move(task));
     }
 
+    void HandleEvent(const SDL_Event& event) {
+        for (auto it = tasks.begin(); it != tasks.end();) {
+            (*it)->HandleEvent(event);
+            ++it;
+        }
+    }
+
     void Update(float deltaTime) {
         for (auto it = tasks.begin(); it != tasks.end();) {
             if ((*it)->Update(deltaTime))

@@ -8,6 +8,7 @@ protected:
 public:
     ITask(float delaySeconds = 0.0f) : delayRemaining(delaySeconds) {}
     virtual ~ITask() = default;
+    virtual void HandleEvent(const SDL_Event& event) {}
     virtual bool Update(float deltaTime) {
         if (delayRemaining > 0.0f) {
             delayRemaining -= deltaTime;

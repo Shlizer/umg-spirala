@@ -28,6 +28,7 @@ private:
                     scene->HandleEvent(event);
                 }
             }
+            this->Context->taskManager->HandleEvent(event);
         }
     }
 

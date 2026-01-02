@@ -21,11 +21,13 @@ namespace CONFIG {
 	/*****************************************
 	 *  P L A Y E R S
 	 */
-	PlayerInfo PLAYERS[3] = {
+	PlayerInfo PLAYERS[2] = {
 		{ Color({ 255, 255, 0, 255 }), SDL_SCANCODE_LEFT, SDL_SCANCODE_RIGHT},
 		{ Color({ 255, 0, 255, 255 }), SDL_SCANCODE_A, SDL_SCANCODE_S},
-		{ Color({ 0, 255, 255, 255 }), SDL_SCANCODE_N, SDL_SCANCODE_M},
+		//{ Color({ 0, 255, 255, 255 }), SDL_SCANCODE_N, SDL_SCANCODE_M},
 	};
+
+	int PLAYER_COUNT = (sizeof(PLAYERS) / sizeof(*PLAYERS));
 
 	/*****************************************
 	 *  K E Y C O D E S

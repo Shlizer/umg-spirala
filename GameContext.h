@@ -24,7 +24,6 @@ public:
 
     std::vector<KillEvent> killLog;
     int aliveCount = 0;
-    int totalPlayers = 0;
     int winnerId = -1;
     SDL_Color winnerColor = { 255,255,255,255 };
 };
