@@ -14,8 +14,6 @@ class Task : public ITask {
     tFloatFunction onUpdateCallback = nullptr;
     tVoidFunction onCompleteCallback = nullptr;
 
-    GameContext* Context;
-
 public:
     Task(float delay = 0, tFloatFunction OnUpdate = nullptr, tVoidFunction OnComplete = nullptr) : ITask(delay) {
         onUpdateCallback = OnUpdate;

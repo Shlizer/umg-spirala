@@ -98,8 +98,6 @@ public:
         return this;
     }
 
-    void SetAngle(float a) { this->position.angle = a; }
-
     void HandleInput(const bool* keystate) {
         if (state != PlayerState::Playing) return;
         if (keystate[info.keyLeft]) this->position.angle -= PLAYER_TURN_SPEED;
@@ -132,7 +130,7 @@ public:
             float perpY = dx / len;
 
             // Draw line alongside offset
-            for (int offset = -PLAYER_THICKNESS / 2; offset <= PLAYER_THICKNESS / 2; offset++) {
+            for (float offset = -PLAYER_THICKNESS / 2; offset <= PLAYER_THICKNESS / 2; offset++) {
                 float offsetX = perpX * offset;
                 float offsetY = perpY * offset;
 

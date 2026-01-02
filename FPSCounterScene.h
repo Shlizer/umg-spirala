@@ -9,8 +9,8 @@ using namespace UTILS;
 
 class FPSCounterScene : public IScene {
     TTF_Font* font;
-    SDL_Surface* textSurface;
-    SDL_Texture* textTexture;
+    SDL_Surface* textSurface = nullptr;
+    SDL_Texture* textTexture = nullptr;
 
     char buffer[32] = "";
     SDL_Color color = { 255,255,0,120 };

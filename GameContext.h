@@ -10,8 +10,8 @@ public:
     SDL_Renderer* renderer = nullptr;
     SDL_Window* window = nullptr;
     bool isRunning = true;
-    int windowWidth = WIDTH;
-    int windowHeight = HEIGHT;
+    int windowWidth = CONFIG::WIDTH;
+    int windowHeight = CONFIG::HEIGHT;
     bool fullscreen = false;
 
     int targetFPS = 60;
