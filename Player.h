@@ -1,25 +1,20 @@
 #pragma once
 #include <random>
-#include <vector>
-#include <SDL3/SDL_pixels.h>
-#include <SDL3/SDL_scancode.h>
-#include <SDL3/SDL_rect.h>
-#include <SDL3/SDL_render.h>
+#include <SDL3/SDL.h>
 #include "Utils.h"
 #include "Config.h"
+#include "CollisionSystem.h"
 
 using namespace std;
 using namespace UTILS;
 using namespace CONFIG;
-
-const int MAX_SPAWN_ATTEMPTS = 100;
 
 struct PlayerPosition {
     float x, y, angle;
 };
 
 enum class PlayerState {
-    WarmingUp,  // Before start - show position
+    WarmingUp,
     Playing,
     Dead
 };
@@ -28,25 +23,29 @@ class Player {
 private:
     GameContext* Context;
     PlayerPosition position;
+    PlayerPosition prevPosition;
     PlayerState state = PlayerState::WarmingUp;
-
     PlayerInfo info;
+    bool hasPrevPosition = false;
 
-    vector<SDL_FPoint> trail;
-    mt19937 gen;
+    int playerId = -1;
+    int lastPixelX = -1;
+    int lastPixelY = -1;
+    int pixelMoveCount = 0;
+
+    float trailTimer = 0.0f;
+    bool isDrawing = true;
 
     SDL_FPoint GetScaledPosition(float scale) const {
         float centerX = this->Context->windowWidth * 0.5f;
         float centerY = this->Context->windowHeight * 0.5f;
-
-        // Player distance from center
         float dx = position.x - centerX;
         float dy = position.y - centerY;
         return { centerX + dx * scale, centerY + dy * scale };
     }
 
 public:
-    Player(GameContext* Context, PlayerInfo info) : Context(Context), info(info) {}
+    Player(GameContext* Context, PlayerInfo info, int id) : Context(Context), info(info), playerId(id) {}
 
     Player* SetRandomPosition(float edgeMargin, float playerDistance, const vector<Player*>& others) {
         mt19937 gen{ random_device{}() };
@@ -59,18 +58,15 @@ public:
         uniform_real_distribution<float> distY(minY, maxY);
         uniform_real_distribution<float> distAngle(0, 2 * static_cast<float>(PI));
 
-        for (int attempt = 0; attempt < MAX_SPAWN_ATTEMPTS; attempt++) {
+        for (int attempt = 0; attempt < 100; attempt++) {
             float x = distX(gen);
             float y = distY(gen);
-            float angle = distAngle(gen);
 
             bool validPosition = true;
             for (const auto* player : others) {
                 float dx = player->GetX() - x;
                 float dy = player->GetY() - y;
-                float dist = sqrtf(dx * dx + dy * dy);
-
-                if (dist < playerDistance) {
+                if (sqrtf(dx * dx + dy * dy) < playerDistance) {
                     validPosition = false;
                     break;
                 }
@@ -79,7 +75,7 @@ public:
             if (validPosition) {
                 position.x = x;
                 position.y = y;
-                position.angle = angle;
+                position.angle = distAngle(gen);
                 return this;
             }
         }
@@ -102,71 +98,83 @@ public:
         this->position.x += cosf(this->position.angle) * PLAYER_SPEED;
         this->position.y += sinf(this->position.angle) * PLAYER_SPEED;
 
-        trail.push_back({ this->position.x, this->position.y });
+        this->trailTimer += deltaTime;
+        if (this->isDrawing && this->trailTimer >= TRAIL_GAP_INTERVAL) {
+            this->isDrawing = false;
+            this->trailTimer = 0.0f;
+        }
+        else if (!this->isDrawing && this->trailTimer >= TRAIL_GAP_DURATION) {
+            this->isDrawing = true;
+            this->trailTimer = 0.0f;
+        }
+
+        this->hasPrevPosition = true;
     }
 
-    void Draw() {
-        if (trail.size() < 2) return;
-        SDL_SetRenderDrawColor(this->Context->renderer, info.color.r, info.color.g, info.color.b, info.color.a);
+    bool CheckCollisionAndDraw(CollisionSystem& collision) {
+        if (!this->hasPrevPosition) return false;
 
-        for (size_t i = 1; i < trail.size(); i++) {
-            // Line direction
-            float dx = trail[i].x - trail[i - 1].x;
-            float dy = trail[i].y - trail[i - 1].y;
-            float len = sqrtf(dx * dx + dy * dy);
+        int currPixelX = (int)this->position.x;
+        int currPixelY = (int)this->position.y;
 
-            if (len < 0.001f) continue; // Ignore if distance is too short
-
-            // Perpendicural (90deg)
-            float perpX = -dy / len;
-            float perpY = dx / len;
-
-            // Draw line alongside offset
-            for (float offset = -PLAYER_THICKNESS / 2; offset <= PLAYER_THICKNESS / 2; offset++) {
-                float offsetX = perpX * offset;
-                float offsetY = perpY * offset;
-
-                SDL_RenderLine(this->Context->renderer,
-                    trail[i - 1].x + offsetX, trail[i - 1].y + offsetY,
-                    trail[i].x + offsetX, trail[i].y + offsetY);
-            }
+        if (currPixelX == lastPixelX && currPixelY == lastPixelY) {
+            return false;
         }
+
+        float fromX = (lastPixelX >= 0) ? (float)lastPixelX : this->position.x;
+        float fromY = (lastPixelY >= 0) ? (float)lastPixelY : this->position.y;
+
+        SDL_Color color = info.color.toColor();
+        float collisionX, collisionY;
+
+        bool skipCollision = (pixelMoveCount < PLAYER_THICKNESS * 2);
+
+        bool hit = collision.CheckAndDrawLine(
+            fromX, fromY,
+            this->position.x, this->position.y,
+            PLAYER_THICKNESS,
+            color,
+            skipCollision,
+            !this->isDrawing,
+            &collisionX, &collisionY
+        );
+
+        lastPixelX = currPixelX;
+        lastPixelY = currPixelY;
+        pixelMoveCount++;
+
+        if (hit) {
+            this->position.x = collisionX;
+            this->position.y = collisionY;
+        }
+
+        return hit;
     }
 
     void DrawStart(float scale, float alpha) {
         auto pos = GetScaledPosition(scale);
-
-        // Circle in start position
         SDL_SetRenderDrawColor(this->Context->renderer, info.color.r, info.color.g, info.color.b, static_cast<Uint8>(alpha));
 
         float radius = 8.0f;
         int segments = 16;
-
-        // Draw circle
         for (int i = 0; i < segments; i++) {
             float angle1 = (2.0f * static_cast<float>(PI) * i) / segments;
             float angle2 = (2.0f * static_cast<float>(PI) * (i + 1)) / segments;
-
             SDL_RenderLine(this->Context->renderer,
                 pos.x + cosf(angle1) * radius, pos.y + sinf(angle1) * radius,
                 pos.x + cosf(angle2) * radius, pos.y + sinf(angle2) * radius);
         }
 
-        // Direction arrow
         float arrowLength = 20.0f;
         float arrowWidth = 8.0f;
-
-        // Arrow point
         float endX = pos.x + cosf(this->position.angle) * arrowLength;
         float endY = pos.y + sinf(this->position.angle) * arrowLength;
 
-        // Arrow main line
         for (int i = -1; i <= 1; i++) {
             SDL_RenderLine(this->Context->renderer, pos.x + i, pos.y, endX + i, endY);
-        }  
+        }
 
-        // Arrow side lines
-        float arrowAngle = 0.5f; // ~30 deg
+        float arrowAngle = 0.5f;
         SDL_RenderLine(this->Context->renderer, endX, endY,
             endX - cosf(this->position.angle - arrowAngle) * arrowWidth,
             endY - sinf(this->position.angle - arrowAngle) * arrowWidth);
@@ -175,12 +183,22 @@ public:
             endY - sinf(this->position.angle + arrowAngle) * arrowWidth);
     }
 
-    void Start() { this->state = PlayerState::Playing; }
-    void Kill() { this->state = PlayerState::Dead; }
+    void Start() {
+        this->state = PlayerState::Playing;
+        this->prevPosition = this->position;
+        this->hasPrevPosition = true;
+        this->lastPixelX = (int)this->position.x;
+        this->lastPixelY = (int)this->position.y;
+        this->pixelMoveCount = 0;
+        this->trailTimer = 0.0f;
+        this->isDrawing = true;
+    }
 
-    // Getters for collision
-    const vector<SDL_FPoint>& GetTrail() const { return trail; }
-    int GetLineThickness() const { return PLAYER_THICKNESS; }
+    void Kill() { 
+        SDL_Log("Player %d is DEAD", playerId);
+        this->state = PlayerState::Dead;
+    }
+
     bool IsAlive() const { return state == PlayerState::Playing; }
     float GetX() const { return this->position.x; }
     float GetY() const { return this->position.y; }

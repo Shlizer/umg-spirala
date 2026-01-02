@@ -65,9 +65,12 @@ namespace CONFIG {
 	/*****************************************
 	 *  P L A Y E R
 	 */
-	const float PLAYER_SPEED = 0.35f;
-	const float PLAYER_TURN_SPEED = 0.02f;
-	const int PLAYER_THICKNESS = 3;
+	const float PLAYER_SPEED = 0.14f;
+	const float PLAYER_TURN_SPEED = 0.005f;
+	const int PLAYER_THICKNESS = 1;
+	
+	const float TRAIL_GAP_INTERVAL = 2.0f;
+	const float TRAIL_GAP_DURATION = 0.1f;
 
 	/*****************************************
 	 *  A N I M A T I O N   S T A T E S

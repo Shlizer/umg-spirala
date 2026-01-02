@@ -74,5 +74,8 @@
     <ClInclude Include="Task.h">
       <Filter>Pliki nagłówkowe\Tasks</Filter>
     </ClInclude>
+    <ClInclude Include="CollisionSystem.h">
+      <Filter>Pliki nagłówkowe\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

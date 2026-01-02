@@ -6,25 +6,28 @@
 #include "Player.h"
 #include "Task.h"
 #include "Config.h"
+#include "CollisionSystem.h"
 
 using namespace std;
 using namespace CONFIG;
 
 class GameplayScene : public IScene {
     bool isPlaying = false;
-    SDL_Color colorBg = { 0,0,0,100 };
-    SDL_Color colorBorder = { 255,255,255,255 };
+    SDL_Color colorBg = { 0, 0, 0, 100 };
+    SDL_Color colorBorder = { 255, 255, 255, 255 };
 
     StateAnimator animator;
-
     vector<Player*> players;
+    CollisionSystem collision;
 
     void SetupPlayers() {
         for (auto* p : players) delete p;
         players.clear();
+        collision.Clear();
+        int id = 0;
 
         for (auto& playerInfo : PLAYERS) {
-            Player* p = new Player(this->Context, playerInfo);
+            Player* p = new Player(this->Context, playerInfo, id++);
             p->SetRandomPosition(SCENE_GAMEPLAY_SPAWN_DISTANCE_EDGE,
                 SCENE_GAMEPLAY_SPAWN_DISTANCE_PLAYER, players);
             players.push_back(p);
@@ -59,6 +62,7 @@ public:
     GameplayScene(GameContext* ctx) : IScene(ctx) {
         this->animator.setSmooth(true);
         this->animator.SetState(ANIM_CLOSED);
+        collision.Init(ctx->renderer, ctx->windowWidth, ctx->windowHeight);
     }
 
     ~GameplayScene() {
@@ -67,7 +71,6 @@ public:
 
     void Activate() override {
         this->Active = true;
-
         this->animator.BlendTo(ANIM_OPENED, 2.0f);
         this->Restart();
     }
@@ -77,15 +80,10 @@ public:
             if (event.key.key == KEY_EXIT) {
                 this->Context->isRunning = false;
             }
-        }
-        if (event.type == SDL_EVENT_KEY_DOWN) {
-            if (event.key.key == KEY_RESTART) {
-                if (this->isPlaying == true) {
-                    this->Restart();
-                }
+            if (event.key.key == KEY_RESTART && this->isPlaying) {
+                this->Restart();
             }
         }
-
     }
 
     void Update(float deltaTime) override {
@@ -112,34 +110,7 @@ public:
                 continue;
             }
 
-            bool collision = false;
-            for (const auto* other : players) {
-                const auto& trail = other->GetTrail();
-                if (trail.size() < 2) continue;
-
-                size_t endIdx;
-                if (other == player) {
-                    if (trail.size() <= 30) continue;
-                    endIdx = trail.size() - 10;
-                }
-                else {
-                    endIdx = trail.size();
-                }
-
-                for (size_t i = 0; i < endIdx; i++) {
-                    float dx = trail[i].x - player->GetX();
-                    float dy = trail[i].y - player->GetY();
-                    float dist = sqrtf(dx * dx + dy * dy);
-
-                    if (dist < other->GetLineThickness()) {
-                        collision = true;
-                        break;
-                    }
-                }
-                if (collision) break;
-            }
-
-            if (collision) {
+            if (player->CheckCollisionAndDraw(collision)) {
                 player->Kill();
             }
         }
@@ -150,10 +121,8 @@ public:
 
         float originalW = (float)this->Context->windowWidth - SCENE_GAMEPLAY_PADDING_L * 2;
         float originalH = (float)this->Context->windowHeight - SCENE_GAMEPLAY_PADDING_T - SCENE_GAMEPLAY_PADDING_B;
-
         float centerX = SCENE_GAMEPLAY_PADDING_L + originalW / 2.0f;
         float centerY = SCENE_GAMEPLAY_PADDING_T + originalH / 2.0f;
-
         float scaledW = originalW * state.scale;
         float scaledH = originalH * state.scale;
 
@@ -169,11 +138,13 @@ public:
         UTILS::setColor(this->Context->renderer, colorBorder, state.alpha);
         SDL_RenderRect(this->Context->renderer, &rect);
 
-        for (auto* player : players) {
-            if (isPlaying)
-                player->Draw();
-            else
+        if (isPlaying) {
+            SDL_RenderTexture(this->Context->renderer, collision.GetTexture(), nullptr, nullptr);
+        }
+        else {
+            for (auto* player : players) {
                 player->DrawStart(state.scale, state.alpha);
+            }
         }
     }
 };
