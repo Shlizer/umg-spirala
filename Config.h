@@ -28,6 +28,7 @@ namespace CONFIG {
 	};
 
 	int PLAYER_COUNT = (sizeof(PLAYERS) / sizeof(*PLAYERS));
+	int PLAYER_SPAWN_ATTEMPT_COUNT = 100;
 
 	/*****************************************
 	 *  K E Y C O D E S
@@ -67,12 +68,12 @@ namespace CONFIG {
 	/*****************************************
 	 *  P L A Y E R
 	 */
-	const float PLAYER_SPEED = 0.14f;
-	const float PLAYER_TURN_SPEED = 0.005f;
+	const float PLAYER_SPEED = 0.94f;
+	const float PLAYER_TURN_SPEED = 0.04f;
 	const int PLAYER_THICKNESS = 1;
 	
-	const float TRAIL_GAP_INTERVAL = 2.0f;
-	const float TRAIL_GAP_DURATION = 0.1f;
+	const float TRAIL_GAP_INTERVAL = 3.0f;
+	const float TRAIL_GAP_DURATION = 0.4f;
 
 	/*****************************************
 	 *  A N I M A T I O N   S T A T E S

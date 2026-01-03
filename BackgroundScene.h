@@ -34,7 +34,7 @@ public:
         float gOffset = sin(this->time * COLOR_BACKGROUND_G_OFFSET_SIN) * COLOR_BACKGROUND_G_OFFSET;
         float bOffset = sin(this->time * COLOR_BACKGROUND_B_OFFSET_SIN) * COLOR_BACKGROUND_B_OFFSET;
 
-        for (float y = 0; y < this->Context->windowHeight; y++) {
+        for (float y = 0; y < this->Context->windowHeight; ++y) {
             float yPos = static_cast<float>(y) / static_cast<float>(this->Context->windowHeight);
 
             UTILS::Color bgColor = this->GetColorGradient(yPos);

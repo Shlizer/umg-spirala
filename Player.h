@@ -58,7 +58,7 @@ public:
         uniform_real_distribution<float> distY(minY, maxY);
         uniform_real_distribution<float> distAngle(0, 2 * static_cast<float>(PI));
 
-        for (int attempt = 0; attempt < 100; attempt++) {
+        for (int attempt = 0; attempt < CONFIG::PLAYER_SPAWN_ATTEMPT_COUNT; ++attempt) {
             float x = distX(gen);
             float y = distY(gen);
 
@@ -170,7 +170,7 @@ public:
         float endX = pos.x + cosf(this->position.angle) * arrowLength;
         float endY = pos.y + sinf(this->position.angle) * arrowLength;
 
-        for (int i = -1; i <= 1; i++) {
+        for (int i = -1; i <= 1; ++i) {
             SDL_RenderLine(this->Context->renderer, pos.x + i, pos.y, endX + i, endY);
         }
 

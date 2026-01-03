@@ -5,7 +5,7 @@
 
 class CollisionSystem {
 private:
-    std::vector<uint8_t> grid;
+    std::vector<int> grid;
     SDL_Texture* texture = nullptr;
     SDL_Renderer* renderer = nullptr;
     int width = 0;
@@ -67,8 +67,8 @@ public:
 
         if (newPixel) {
             if (!skipCollisionCheck) {
-                for (int tx = -halfThick; tx <= halfThick && !collision; tx++) {
-                    for (int ty = -halfThick; ty <= halfThick && !collision; ty++) {
+                for (int tx = -halfThick; tx <= halfThick && !collision; ++tx) {
+                    for (int ty = -halfThick; ty <= halfThick && !collision; ++ty) {
                         if (CheckPixel(ix1 + tx, iy1 + ty)) {
                             collision = true;
                         }
@@ -95,8 +95,8 @@ public:
         SDL_SetRenderDrawColor(this->renderer, color.r, color.g, color.b, color.a);
 
         int halfThick = thickness / 2;
-        for (int tx = -halfThick; tx <= halfThick; tx++) {
-            for (int ty = -halfThick; ty <= halfThick; ty++) {
+        for (int tx = -halfThick; tx <= halfThick; ++tx) {
+            for (int ty = -halfThick; ty <= halfThick; ++ty) {
                 SetPixel(x + tx, y + ty);
             }
         }
@@ -123,8 +123,8 @@ private:
         int halfThick = thickness / 2;
 
         while (true) {
-            for (int tx = -halfThick; tx <= halfThick; tx++) {
-                for (int ty = -halfThick; ty <= halfThick; ty++) {
+            for (int tx = -halfThick; tx <= halfThick; ++tx) {
+                for (int ty = -halfThick; ty <= halfThick; ++ty) {
                     SetPixel(cx + tx, cy + ty);
                 }
             }

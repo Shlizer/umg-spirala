@@ -44,9 +44,6 @@
     <ClInclude Include="ITask.h">
       <Filter>Pliki nagłówkowe\Tasks</Filter>
     </ClInclude>
-    <ClInclude Include="IScene.h">
-      <Filter>Pliki nagłówkowe\Config</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
@@ -82,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="TaskEndGame.h">
       <Filter>Pliki nagłówkowe\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="IScene.h">
+      <Filter>Pliki nagłówkowe\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

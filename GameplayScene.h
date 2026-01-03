@@ -46,7 +46,7 @@ class GameplayScene : public IScene {
         this->gameEnded = false;
         this->SetupPlayers();
 
-        for (int i = 0; i < COUNTER_SIZE; i++) {
+        for (int i = 0; i < COUNTER_SIZE; ++i) {
             char buf[3];
             sprintf_s(buf, "%d", COUNTER_SIZE - i);
             auto task = make_unique<TaskCounter>(this->Context, buf, COUNTER_TIME, i);
